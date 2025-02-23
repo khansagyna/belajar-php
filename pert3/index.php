@@ -85,6 +85,7 @@ $result = $conn->query($sql);
                 </div>
                 <div class="modal-body">
                     <form action="update.php" method="post">
+                    <input type="hidden" id="edit-npm" name="npm">
                         <div class="mb-3">
                             <label for="edit-nama" class="form-label">Nama</label>
                             <input type="text" class="form-control" id="edit-nama" name="nama" required>
