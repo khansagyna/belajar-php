@@ -9,7 +9,13 @@ include 'config.php';
 $stmt = $conn->prepare("SELECT * FROM datamahasiswa");
 $stmt->execute();
 $result = $stmt->get_result();
+
+include 'config.php';
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+$sql = "SELECT * FROM datamahasiswa WHERE nama LIKE '%$search%' OR npm LIKE '%$search%'";
+$result = $conn->query($sql);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,14 +32,23 @@ $result = $stmt->get_result();
 
 <body class="">
 <div class="utama container">
-<div class="tabel shadow pt-5 pb-5 ps-5 pe-5 rounded-5">
-<h2 class="pb-3">Daftar Mahasiswa</h2>
+    <div>
+    <h3 class="slmt mb-4 fs-2">Selamat Datang, <?php echo $_SESSION['username']; ?>!</h3>
+<div class="tabel shadow pt-4 pb-5 ps-5 pe-5 rounded-5">
+    <div class="d-flex justify-content-between">
+<h2 class="pb-3 fs-3">Daftar Mahasiswa</h2>
+<a href="logout.php" class="btn btn-danger ms-5 mb-4">Logout  <i class="fa-solid fa-right-from-bracket"></i></a>
+</div>
 <!-- Button trigger modal -->
+ <div class="d-flex justify-content-between">
 <button type="button" class="btn btn-primary mb-4 " data-bs-toggle="modal" data-bs-target="#exampleModal">
   Tambah Data
 </button>
-<a href="logout.php" class="btn btn-danger mb-4">Logout</a>
-
+<div class="input-group mb-3">
+    <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+    <input type="text" id="searchInput" class="cari form-control" placeholder="Cari...">
+</div>
+</div>
 <div class="table2">
 <table class="border border-secondary-subtle">
     <tr>
@@ -60,6 +75,7 @@ $result = $stmt->get_result();
         $conn->close();
     ?>
 </table>
+</div>
 </div>
 </div>
 </div>
@@ -140,5 +156,27 @@ $(document).ready(function () {
     });
 });
 </script>
+<script>
+document.getElementById("searchInput").addEventListener("keyup", function () {
+    var input = this.value.toLowerCase(); // Ambil nilai input & ubah jadi huruf kecil
+    var table = document.querySelector("table"); // Ambil tabel
+    var rows = table.getElementsByTagName("tr"); // Ambil semua baris
+
+    for (var i = 1; i < rows.length; i++) { // Looping mulai dari baris kedua (skip header)
+        var cells = rows[i].getElementsByTagName("td"); // Ambil semua kolom
+        var found = false;
+
+        for (var j = 0; j < cells.length; j++) { // Looping tiap kolom
+            if (cells[j].innerText.toLowerCase().includes(input)) {
+                found = true;
+                break; // Stop jika ada yang cocok
+            }
+        }
+        
+        rows[i].style.display = found ? "" : "none"; // Sembunyikan jika tidak cocok
+    }
+});
+</script>
+
 </body>
 </html>
