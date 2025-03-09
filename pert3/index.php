@@ -6,22 +6,29 @@ if (!isset($_SESSION["username"])) {
 }
 
 include 'config.php';
-$stmt = $conn->prepare("SELECT * FROM datamahasiswa");
+
+
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+
+$sql = "SELECT * FROM datamahasiswa 
+        WHERE nama LIKE ? OR npm LIKE ?
+        ORDER BY kelas ASC, nama ASC";  
+
+$stmt = $conn->prepare($sql);
+$searchParam = "%$search%";
+$stmt->bind_param("ss", $searchParam, $searchParam);
 $stmt->execute();
 $result = $stmt->get_result();
-
-include 'config.php';
-$search = isset($_GET['search']) ? $_GET['search'] : '';
-$sql = "SELECT * FROM datamahasiswa WHERE nama LIKE '%$search%' OR npm LIKE '%$search%'";
-$result = $conn->query($sql);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mahasiswa</title>
+    <title>Mahasiswa</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
